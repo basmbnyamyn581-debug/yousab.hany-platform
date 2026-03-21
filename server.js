@@ -3,9 +3,12 @@ const cors = require("cors");
 
 const app = express();
 
-// middlewares
+// middleware
 app.use(cors());
 app.use(express.json());
+
+// 🔥 مهم: اطبع لوج علشان نتأكد
+console.log("Loading routes...");
 
 // routes
 const authRoutes = require("./routes/auth");
@@ -16,7 +19,11 @@ app.get("/", (req, res) => {
   res.send("Server is working 🚀");
 });
 
-// start server
+// 🔥 test route تاني للتأكد
+app.get("/test", (req, res) => {
+  res.send("Auth route should work");
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
