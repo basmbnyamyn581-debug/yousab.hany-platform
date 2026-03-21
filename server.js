@@ -1,26 +1,22 @@
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
 
 const app = express();
 
+// middlewares
 app.use(cors());
 app.use(express.json());
 
-// اتصال قاعدة البيانات
-mongoose.connect(process.env.MONGODB_URL)
-.then(() => console.log("DB Connected ✅"))
-.catch(err => console.log(err));
+// routes
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
 
-// Routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/admin", require("./routes/admin"));
-
-// Test
+// test route
 app.get("/", (req, res) => {
-  res.send("🚀 منصة المهندس يوساب هاني شغالة");
+  res.send("Server is working 🚀");
 });
 
+// start server
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
