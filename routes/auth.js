@@ -1,50 +1,33 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
-// تسجيل حساب جديد
-router.post("/register", async (req, res) => {
+// تسجيل حساب
+router.post("/register", (req, res) => {
   const { name, phone, parentPhone, password } = req.body;
 
   if (!name || !phone || !parentPhone || !password) {
-    return res.status(400).send("كمل كل البيانات ❌");
+    return res.status(400).json({ message: "كمل البيانات ❌" });
   }
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  console.log("User Registered:", req.body);
 
-    const user = new User({
-      name,
-      phone,
-      parentPhone,
-      password: hashedPassword
-    });
-
-    await user.save();
-
-    res.send("تم إنشاء الحساب ✅");
-  } catch (err) {
-    res.status(400).send("الرقم مستخدم قبل كده ❌");
-  }
+  res.json({
+    message: "تم إنشاء الحساب بنجاح ✅",
+    user: { name, phone, parentPhone }
+  });
 });
 
 // تسجيل دخول
-router.post("/login", async (req, res) => {
+router.post("/login", (req, res) => {
   const { phone, password } = req.body;
 
-  const user = await User.findOne({ phone });
-  if (!user) return res.status(400).send("المستخدم غير موجود ❌");
-
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return res.status(400).send("كلمة السر غلط ❌");
-
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  if (!phone || !password) {
+    return res.status(400).json({ message: "كمل البيانات ❌" });
+  }
 
   res.json({
     message: "تم تسجيل الدخول ✅",
-    token
+    token: "test-token"
   });
 });
 
